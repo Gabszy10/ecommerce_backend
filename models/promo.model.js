@@ -2,61 +2,36 @@ const { clearCache } = require("../helper/redis");
 
 module.exports = (sequelize, DataTypes) => {
   const Products = sequelize.define(
-    "tblproduct",
+    "tblpromopro",
     {
-      proid: {
+      promoid: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
 
-      prodesc: {
+      proid: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
 
-      ingredients: {
+      prodiscount: {
         type: DataTypes.STRING(255),
         allowNull: true,
       },
 
-      proqty: {
+      prodisprice: {
         type: DataTypes.STRING(255),
         allowNull: true,
       },
 
-      originalprice: {
+      probanner: {
         type: DataTypes.STRING(300),
         allowNull: true,
       },
 
-      proprice: {
+      pronew: {
         type: DataTypes.STRING(300),
-        allowNull: true,
-      },
-
-      categid: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
-
-      images: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
-
-      prostats: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
-
-      ownername: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
-
-      ownerphone: {
-        type: DataTypes.STRING(255),
         allowNull: true,
       },
 
@@ -75,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       underscored: true,
       freezeTableName: true,
-      tableName: "tblproduct",
+      tableName: "tblpromopro",
     }
   );
 

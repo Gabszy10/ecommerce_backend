@@ -3,30 +3,26 @@ const router = express.Router();
 
 // VALIDATORS
 const {
-    validate,
-    signUpSchema,
-    signInSchema,
+  validate,
+  signUpSchema,
+  signInSchema,
 } = require("../../validators/user/auth.validator");
 
 // MIDDLEWARES
 const {
-    signUpMiddleware,
-    signInMiddleware,
+  signUpMiddleware,
+  signInMiddleware,
 } = require("../../middlewares/user/auth.middleware");
 
 // CONTROLLERS
 const {
-    signUpController,
-    signInController,
+  signUpController,
+  signInController,
 } = require("../../controllers/user/auth.controller");
 
 // ROUTES
-router
-    .route("/signUp")
-    .post(validate(signUpSchema), signUpMiddleware, signUpController);
+router.route("/signUp").post(signUpController);
 
-router
-    .route("/signIn")
-    .post(validate(signInSchema), signInMiddleware, signInController);
+router.route("/signIn").post(signInMiddleware, signInController);
 
 module.exports = router;

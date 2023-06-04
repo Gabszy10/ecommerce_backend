@@ -6,99 +6,95 @@ const bcrypt = require("bcryptjs");
 
 // db
 const db = require("../../models");
-const User = db.users;
+const User = db.tblcustomer;
 
 passport.use(
-    "user_local",
-    new JwtStrategy(
-        {
-            jwtFromRequest: ExtractJwt.fromHeader("authorization"),
-            secretOrKey: process.env.JWT_SECRET,
-        },
-        async (payload, done) => {
-            console.log("user auth middleware reached");
+  "user_local",
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromHeader("authorization"),
+      secretOrKey: process.env.JWT_SECRET,
+    },
+    async (payload, done) => {
+      console.log("user auth middleware reached");
 
-            try {
-                const user = await User.findOne({
-                    where: { id: payload.id },
-                    attributes: ["id"],
-                });
+      try {
+        const user = await User.findOne({
+          where: { id: payload.id },
+          attributes: ["id"],
+        });
 
-                if (!user) {
-                    return done(null, false);
-                }
-
-                done(null, user);
-            } catch (error) {
-                console.log(error);
-
-                done(error, false);
-            }
+        if (!user) {
+          return done(null, false);
         }
-    )
+
+        done(null, user);
+      } catch (error) {
+        console.log(error);
+
+        done(error, false);
+      }
+    }
+  )
 );
 
 module.exports = {
-    authMiddleware: passport.authenticate("user_local", { session: false }),
+  authMiddleware: passport.authenticate("user_local", { session: false }),
 
-    signUpMiddleware: async (req, res, next) => {
-        try {
-            const { email } = req.validated.user;
+  signUpMiddleware: async (req, res, next) => {
+    try {
+      const { email } = req.validated.user;
 
-            const user = await User.findOne({
-                where: {
-                    email,
-                },
-                attributes: ["email"],
-            });
+      const user = await User.findOne({
+        where: {
+          email,
+        },
+        attributes: ["email"],
+      });
 
-            if (user == null) {
-                next();
-            } else {
-                throw "Email already exists.";
-            }
-        } catch (error) {
-            console.log(error);
+      if (user == null) {
+        next();
+      } else {
+        throw "Email already exists.";
+      }
+    } catch (error) {
+      console.log(error);
 
-            return res.status(400).json({
-                error,
-            });
-        }
-    },
+      return res.status(400).json({
+        error,
+      });
+    }
+  },
 
-    signInMiddleware: async (req, res, next) => {
-        try {
-            const { email, password } = req.validated.user;
+  signInMiddleware: async (req, res, next) => {
+    try {
+      const { username, password } = req.body;
 
-            let user = await User.findOne({
-                where: {
-                    email,
-                },
-                // attributes: ["id", "password"],
-            });
+      let user = await User.findOne({
+        where: {
+          cusuname: username,
+        },
+      });
 
-            if (!user) {
-                throw "Email not found!";
-            }
+      if (!user) {
+        throw "User not found!";
+      }
+      console.log(user);
+      const isPasswordMatch = await bcrypt.compare(password, user.cuspass);
 
-            const isPasswordMatch = await bcrypt.compare(
-                password,
-                user.password
-            );
+      if (!isPasswordMatch) {
+        throw "Email and password don't match.";
+      }
 
-            if (!isPasswordMatch) {
-                throw "Email and password don't match.";
-            }
+      req.user = user;
 
-            req.user = user;
+      next();
+    } catch (error) {
+      console.log(error);
 
-            next();
-        } catch (error) {
-            console.log(error);
-
-            return res.status(400).json({
-                error,
-            });
-        }
-    },
+      return res.status(400).json({
+        error,
+      });
+    }
+  },
 };

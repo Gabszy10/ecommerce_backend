@@ -3,9 +3,9 @@ const router = express.Router();
 
 // VALIDATORS
 const {
-    validate,
-    createOrderSchema,
-    sendEmailSchema
+  validate,
+  createOrderSchema,
+  sendEmailSchema,
 } = require("../../validators/user/order.validator");
 
 // MIDDLEWARES
@@ -13,29 +13,27 @@ const { authMiddleware } = require("../../middlewares/user/auth.middleware");
 
 // CONTROLLERS
 const {
-    createOrder,
-    orderByName,
-    orderHistory,
-    sendEmail
+  createOrder,
+  orderByName,
+  orderHistory,
+  sendEmail,
+  allOrders,
+  confirmOrder,
 } = require("../../controllers/user/order.controller");
 
 const {
-    updateOrderProductPrices,
+  updateOrderProductPrices,
 } = require("../../middlewares/user/order.middleware");
 
 // ROUTES
 
-router.route("/history/").get(authMiddleware, orderHistory); // get user's order history
+router.route("/history/:orderId").get(orderHistory); // get user's order history
 
 router.route("/name/:orderName").get(orderByName); // get order by name
 
-router
-    .route("/")
-    .post(validate(createOrderSchema), updateOrderProductPrices, createOrder); // createOrder
-
-router
-    .route("/sendEmail")
-    .post(validate(sendEmailSchema), sendEmail); // createOrder
+router.route("/").post(createOrder); // createOrder
+router.route("/").get(allOrders); // createOrder
+router.route("/confirm/:orderid").patch(confirmOrder); // createOrder
 
 //     {
 //         "orderItems": [

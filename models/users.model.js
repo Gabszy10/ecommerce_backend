@@ -2,54 +2,24 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "tblcustomer",
     {
-      CUSTOMERID: {
+      id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
 
-      FNAME: {
+      fname: {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
 
-      LNAME: {
+      lname: {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
 
-      MNAME: {
+      cityadd: {
         type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-
-      CUSHOMENUM: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-
-      STREETADD: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-
-      BRGYADD: {
-        type: DataTypes.STRING(200),
-        allowNull: true,
-      },
-
-      CITYADD: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-
-      PROVINCE: {
-        type: DataTypes.STRING(20),
-        allowNull: true,
-      },
-
-      COUNTRY: {
-        type: DataTypes.STRING(300),
         allowNull: true,
       },
 
@@ -58,48 +28,47 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
 
-      GENDER: {
+      gender: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
 
-      PHONE: {
+      phone: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      EMAILADD: {
+
+      emailadd: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      ZIPCODE: {
+
+      cusuname: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      CUSUNAME: {
+
+      cuspass: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      CUSPASS: {
+
+      datejoin: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      CUSPHOTO: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
+
+      createdAt: {
+        field: "created_at",
+        type: DataTypes.DATE,
       },
-      TERMS: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-      DATEJOIN: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
+      updatedAt: {
+        field: "updated_at",
+        type: DataTypes.DATE,
       },
     },
 
     {
-      timestamps: true,
-      underscored: true,
       freezeTableName: true,
       tableName: "tblcustomer",
     }
