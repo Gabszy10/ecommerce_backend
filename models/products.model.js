@@ -1,5 +1,3 @@
-const { clearCache } = require("../helper/redis");
-
 module.exports = (sequelize, DataTypes) => {
   const Products = sequelize.define(
     "tblproduct",

@@ -1,5 +1,4 @@
 // db
-const { modelCached } = require("../../helper/redis");
 const db = require("../../models");
 const sequelize = db.sequelize;
 const { QueryTypes } = require("sequelize");
