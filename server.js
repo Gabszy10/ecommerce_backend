@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3();
 require("dotenv").config();
 
 // Database
@@ -8,6 +10,30 @@ const db = require("./models");
 
 // LOGGER
 const morgan = require("morgan");
+
+app.get("*", async (req, res) => {
+  let filename = req.path.slice(1);
+
+  try {
+    let s3File = await s3
+      .getObject({
+        Bucket: process.env.BUCKET,
+        Key: filename,
+      })
+      .promise();
+
+    res.set("Content-type", s3File.ContentType);
+    res.send(s3File.Body.toString()).end();
+  } catch (error) {
+    if (error.code === "NoSuchKey") {
+      console.log(`No such key ${filename}`);
+      res.sendStatus(404).end();
+    } else {
+      console.log(error);
+      res.sendStatus(500).end();
+    }
+  }
+});
 
 // Middlewares
 app.use(express.json({ extended: false })); // for parsing application/json

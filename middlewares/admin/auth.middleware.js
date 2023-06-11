@@ -83,7 +83,7 @@ module.exports = {
     signInMiddleware: async (req, res, next) => {
         try {
             const { username, password } = req.validated.employee;
-
+            
             let employee = await Employee.findOne({
                 where: {
                     username,
