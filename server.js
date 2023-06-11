@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3();
+// const AWS = require("aws-sdk");
+// const s3 = new AWS.S3();
 require("dotenv").config();
 
 // Database
