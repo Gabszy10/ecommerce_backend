@@ -64,8 +64,7 @@ module.exports = {
         orig_price,
         quantity,
       } = req.body;
-
-      const { filename } = req.files[0];
+      const { location } = req.file;
       console.log(
         owner,
         owner_phone,
@@ -78,7 +77,7 @@ module.exports = {
       const newProduct = await Product.create({
         ownername: owner,
         ownerphone: owner_phone,
-        images: filename,
+        images: location,
         prodesc: description,
         categid: category,
         proqty: quantity,

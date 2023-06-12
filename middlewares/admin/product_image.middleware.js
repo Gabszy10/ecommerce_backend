@@ -1,58 +1,68 @@
 const multer = require("multer");
+const multerS3 = require("multer-s3");
+const { S3Client } = require("@aws-sdk/client-s3");
 const randomString = require("crypto-random-string");
-const fs = require("@cyclic.sh/s3fs")(process.env.CYCLIC_BUCKET_NAME);
+const path = require("path")
+const fs = require("fs");
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: "AKIAU6P4XGJTV75BNGFK", // store it in .env file to keep it safe
+    secretAccessKey: "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",
+  },
+  region: "us-east-1", // this is the region that you select in AWS account
+});
 
 // db
 const db = require("../../models");
 const Product_image = db.product_images;
 
-// const storage = multer.diskStorage({
-//   // where images will be stored
-//   destination: (req, file, cb) => {
-//     cb(null, "assets/products");
-//   },
+const s3Storage = multerS3({
+  s3: s3, // s3 instance
+  bucket: "ramdale", // change it as per your project requirement
+  acl: "public-read", // storage access type
+  metadata: (req, file, cb) => {
+    cb(null, { fieldname: file.fieldname });
+  },
+  key: (req, file, cb) => {
+    const fileName =
+      Date.now() + "_" + file.fieldname + "_" + file.originalname;
+    cb(null, fileName);
+  },
+});
 
-//   // image filename
-//   filename: (req, file, cb) => {
-//     // 43214321432fdsa.png or 344321hfgk.jpg
-//     const fileName = `${new Date().getTime()}-${randomString({
-//       length: 10,
-//       type: "url-safe",
-//     })}.${file.mimetype.replace("image/", "")}`;
+function sanitizeFile(file, cb) {
+  // Define the allowed extension
+  const fileExts = [".png", ".jpg", ".jpeg", ".gif"];
 
-//     cb(null, fileName);
-//   },
-// });
+  // Check allowed extensions
+  const isAllowedExt = fileExts.includes(
+    path.extname(file.originalname.toLowerCase())
+  );
 
-// const upload = multer({
-//   storage,
+  // Mime type must be an image
+  const isAllowedMimeType = file.mimetype.startsWith("image/");
 
-//   // 5 mb max
-//   limits: {
-//     fileSize: 1024 * 1024 * 5,
-//   },
+  if (isAllowedExt && isAllowedMimeType) {
+    return cb(null, true); // no errors
+  } else {
+    // pass error msg to callback, which can be displaye in frontend
+    cb("Error: File type not allowed!");
+  }
+}
 
-//   // accepts jpg || png
-//   fileFilter: (req, file, cb) => {
-//     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png")
-//       return cb(null, true);
-
-//     // else
-//     cb(new Error("Only accepts .jpg or .png"), false);
-//   },
-// });
+const upload = multer({
+  storage: s3Storage,
+  fileFilter: (req, file, callback) => {
+    sanitizeFile(file, callback);
+  },
+  limits: {
+    fileSize: 1024 * 1024 * 100, // 2mb file size
+  },
+});
 
 module.exports = {
-  // uploadImageMiddleware: upload.array("image", 10),
-
-  uploadImageMiddleware: async (req, res, next) => {
-    try {
-      fs.writeFileSync("my_file.txt", new Date().toISOString());
-      return res.send("Hello World!");
-    } catch (error) {
-      console.log(error);
-    }
-  },
+  uploadImageMiddleware: upload.single("image"),
 
   checkProductImageMiddleware: async (req, res, next) => {
     try {
