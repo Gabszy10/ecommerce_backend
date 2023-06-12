@@ -133,6 +133,28 @@ module.exports = {
       });
     }
   },
+  deleteProduct: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      await sequelize.query(`DELETE FROM tblproduct WHERE PROID = '${id}'`, {
+        type: QueryTypes.DELETE,
+      });
+      await sequelize.query(`DELETE FROM tblpromopro WHERE PROID = '${id}'`, {
+        type: QueryTypes.DELETE,
+      });
+
+      return res.status(200).json({
+        success: true,
+      });
+    } catch (error) {
+      console.log(error);
+
+      return res.status(400).json({
+        success: false,
+      });
+    }
+  },
 
   adminProduct: async (req, res) => {
     try {
